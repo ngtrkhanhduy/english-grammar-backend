@@ -3,7 +3,7 @@ import { HydratedDocument } from 'mongoose';
 
 export type UserDocument = HydratedDocument<User>;
 
-@Schema()
+@Schema({ timestamps: true })
 export class User {
     @Prop()
     name: string;
@@ -23,17 +23,17 @@ export class User {
     @Prop()
     image: string;
 
-    @Prop({ default: 'USER' })
+    @Prop({ default: 'USERS' })
     role: string;
 
     @Prop({ default: 'LOCAL' })
     accountType: string;
 
     @Prop({ default: false })
-    isActice: boolean;
+    isActive: boolean;
 
     @Prop()
-    codeID: string;
+    codeId: string;
 
     @Prop()
     codeExpired: Date;
