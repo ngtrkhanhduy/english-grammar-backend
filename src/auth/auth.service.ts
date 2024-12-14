@@ -5,6 +5,8 @@ import * as argon2 from 'argon2';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { AuthDto } from './dto/auth.dto';
+import { v4 as uuidv4 } from 'uuid';
+import { MailerService } from '@nestjs-modules/mailer';
 
 @Injectable()
 export class AuthService {
@@ -12,6 +14,7 @@ export class AuthService {
         private usersService: UsersService,
         private jwtService: JwtService,
         private configService: ConfigService,
+        private readonly mailerService: MailerService,
     ) {}
     async signUp(createUserDto: CreateUserDto): Promise<any> {
         // Check if user exists
@@ -22,12 +25,25 @@ export class AuthService {
 
         // Hash password
         const hash = await this.hashData(createUserDto.password);
+        const codeId = uuidv4();
         const newUser = await this.usersService.create({
             ...createUserDto,
             password: hash,
         });
         const tokens = await this.getTokens(newUser.id, newUser.username);
         await this.updateRefreshToken(newUser.id, tokens.refreshToken);
+
+        //send email
+        this.mailerService.sendMail({
+            to: 'ngtrkhanhduy1308@gmail.com', // list of receivers
+            subject: 'Activate your account at English Grammar', // Subject line
+            text: 'Welcome', // plaintext body
+            template: 'register',
+            context: {
+                name: newUser.username,
+                activationCode: codeId,
+            },
+        });
         return tokens;
     }
 
@@ -36,6 +52,9 @@ export class AuthService {
         const user = await this.usersService.findByUsername(data.username);
         if (!user) throw new BadRequestException('User does not exist');
         const passwordMatches = await argon2.verify(user.password, data.password);
+        if (user.isActive === false) {
+            throw new BadRequestException('The account has not been activated yet');
+        }
         if (!passwordMatches) throw new BadRequestException('Password is incorrect');
         const tokens = await this.getTokens(user.id, user.username);
         await this.updateRefreshToken(user.id, tokens.refreshToken);

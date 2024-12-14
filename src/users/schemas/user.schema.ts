@@ -14,6 +14,15 @@ export class User {
     @Prop({ required: true })
     password: string;
 
+    @Prop({ default: 'USERS' })
+    role: string;
+
+    @Prop({ default: 'LOCAL' })
+    accountType: string;
+
+    @Prop({ default: false })
+    isActive: boolean;
+
     @Prop()
     refreshToken: string;
 }
