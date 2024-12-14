@@ -5,10 +5,15 @@ import { AuthService } from './auth.service';
 import { AuthDto } from './dto/auth.dto';
 import { AccessTokenGuard } from 'src/common/guards/accessToken.guard';
 import { RefreshTokenGuard } from 'src/common/guards/refreshToken.guard';
+import { MailerService } from '@nestjs-modules/mailer';
+import { Public } from 'src/decorator/customize';
 
 @Controller('auth')
 export class AuthController {
-    constructor(private authService: AuthService) {}
+    constructor(
+        private readonly authService: AuthService,
+        private readonly mailerService: MailerService,
+    ) {}
 
     @Post('signup')
     signup(@Body() createUserDto: CreateUserDto) {
@@ -32,5 +37,17 @@ export class AuthController {
         const userId = req.user['sub'];
         const refreshToken = req.user['refreshToken'];
         return this.authService.refreshTokens(userId, refreshToken);
+    }
+
+    @Get('mail')
+    @Public()
+    testMail() {
+        this.mailerService.sendMail({
+            to: 'ngtrkhanhduy1308@gmail.com', // list of receivers
+            subject: 'Testing Nest MailerModule ✔', // Subject line
+            text: 'welcome', // plaintext body
+            html: '<b>hello world with dennis</b>', // HTML body content
+        });
+        return 'ok';
     }
 }
