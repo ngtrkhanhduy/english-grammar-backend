@@ -34,4 +34,16 @@ export class UsersController {
     remove(@Param('id') id: string) {
         return this.usersService.remove(id);
     }
+
+    @UseGuards(AccessTokenGuard)
+    @Post(':username')
+    async findUserInfoByUsername(@Param('username') username: string) {
+        const userInfo = await this.usersService.findByUsername(username);
+        return {
+            name: userInfo.name,
+            username: userInfo.username,
+            role: userInfo.role,
+            accountType: userInfo.accountType,
+        };
+    }
 }

@@ -58,7 +58,7 @@ export class AuthService {
         if (!passwordMatches) throw new BadRequestException('Password is incorrect');
         const tokens = await this.getTokens(user.id, user.username);
         await this.updateRefreshToken(user.id, tokens.refreshToken);
-        return tokens;
+        return { username: data.username, ...tokens };
     }
 
     async logout(userId: string) {
