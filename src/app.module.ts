@@ -7,6 +7,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { AuthModule } from './auth/auth.module';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter';
+import { ExercisesQuestionModule } from './exercises-question/exercises-question.module';
 
 @Module({
     imports: [
@@ -48,6 +49,7 @@ import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handleba
             }),
             inject: [ConfigService],
         }),
+        ExercisesQuestionModule,
     ],
     controllers: [AppController],
     providers: [AppService],
