@@ -27,6 +27,9 @@ class Question {
 
 @Schema()
 export class ExercisesQuestion {
+    @Prop({ required: true })
+    exercises_question_name: string;
+
     @Prop({
         type: [Question],
         required: true,

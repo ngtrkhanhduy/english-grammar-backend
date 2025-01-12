@@ -88,4 +88,16 @@ export class ExercisesQuestionService {
         }
         return updatedQuestionSet;
     }
+
+    // Tìm kiếm bằng tên question set
+    async findByName(name: string): Promise<ExercisesQuestion[]> {
+        const questionSets = await this.questionModel
+            .find({ exercises_question_name: new RegExp(name, 'i') }) // Tìm kiếm không phân biệt hoa thường
+            .exec();
+
+        if (!questionSets || questionSets.length === 0) {
+            throw new NotFoundException(`No question sets found with name "${name}"`);
+        }
+        return questionSets;
+    }
 }
