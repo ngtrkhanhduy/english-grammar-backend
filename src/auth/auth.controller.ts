@@ -37,4 +37,11 @@ export class AuthController {
         const refreshToken = req.user['refreshToken'];
         return this.authService.refreshTokens(userId, refreshToken);
     }
+
+    @Post('active')
+    activeUserAccountByUsername(@Req() req: Request) {
+        const username = req.body.username;
+        const activeAccountKey = req.body.activeAccountKey;
+        return this.authService.activeUserAccountByUsername(username, activeAccountKey);
+    }
 }

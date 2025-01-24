@@ -28,6 +28,7 @@ export class AuthService {
         const codeId = uuidv4();
         const newUser = await this.usersService.create({
             ...createUserDto,
+            activeAccountKey: codeId,
             password: hash,
         });
         const tokens = await this.getTokens(newUser.id, newUser.username);
@@ -114,5 +115,26 @@ export class AuthService {
         const tokens = await this.getTokens(user.id, user.username);
         await this.updateRefreshToken(user.id, tokens.refreshToken);
         return tokens;
+    }
+
+    async activeUserAccountByUsername(username: string, activeAccountKey: string) {
+        const user = await this.usersService.findByUsername(username);
+
+        if (!user) {
+            throw new BadRequestException('User does not exist');
+        }
+
+        if (user.isActive === true) {
+            throw new BadRequestException('Your account is already active');
+        }
+
+        if (user.activeAccountKey !== activeAccountKey) {
+            throw new BadRequestException('Incorrect activation key');
+        }
+
+        user.isActive = true;
+        await this.usersService.update(user.id, user);
+
+        return `Successfully activated your account, ${username}!`;
     }
 }

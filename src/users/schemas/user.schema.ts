@@ -23,6 +23,9 @@ export class User {
     @Prop({ default: false })
     isActive: boolean;
 
+    @Prop({ required: true })
+    activeAccountKey: string;
+
     @Prop()
     refreshToken: string;
 }
