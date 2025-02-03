@@ -1,7 +1,5 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, BadRequestException, Query } from '@nestjs/common';
 import { LessonQuestionService } from './lesson-question.service';
-import { CreateLessonQuestionDto } from './dto/create-lesson-question.dto';
-import { UpdateLessonQuestionDto } from './dto/update-lesson-question.dto';
 import { LessonQuestion } from './schemas/lesson-question.schema';
 
 @Controller('lesson-question')
@@ -14,22 +12,31 @@ export class LessonQuestionController {
     }
 
     @Get()
-    findAll() {
+    async findAll() {
         return this.lessonQuestionService.findAll();
+    }
+
+    // Di chuyển phương thức tìm kiếm lên trước để tránh nhầm với :id
+    @Get('/search')
+    async findByName(@Query('name') name: string) {
+        if (!name) {
+            throw new BadRequestException('Query parameter "name" is required');
+        }
+        return this.lessonQuestionService.findByLessonQuestionName(name);
     }
 
     @Get(':id')
     findOne(@Param('id') id: string) {
-        return this.lessonQuestionService.findOne(+id);
+        return this.lessonQuestionService.findOne(id);
     }
 
     @Patch(':id')
-    update(@Param('id') id: string, @Body() updateLessonQuestionDto: UpdateLessonQuestionDto) {
-        return this.lessonQuestionService.update(+id, updateLessonQuestionDto);
+    async update(@Param('id') id: string, @Body() updateData: Partial<LessonQuestion>) {
+        return this.lessonQuestionService.update(id, updateData);
     }
 
     @Delete(':id')
-    remove(@Param('id') id: string) {
-        return this.lessonQuestionService.remove(+id);
+    async remove(@Param('id') id: string) {
+        return this.lessonQuestionService.remove(id);
     }
 }
