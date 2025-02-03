@@ -8,6 +8,10 @@ import { AuthModule } from './auth/auth.module';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter';
 import { ExercisesQuestionModule } from './exercises-question/exercises-question.module';
+import { UserInfomationModule } from './user-infomation/user-infomation.module';
+import { UserLessonProcessModule } from './user-lesson-process/user-lesson-process.module';
+import { UserExercisesProcessModule } from './user-exercises-process/user-exercises-process.module';
+import { LessonQuestionModule } from './lesson-question/lesson-question.module';
 
 @Module({
     imports: [
@@ -50,6 +54,10 @@ import { ExercisesQuestionModule } from './exercises-question/exercises-question
             inject: [ConfigService],
         }),
         ExercisesQuestionModule,
+        UserInfomationModule,
+        UserLessonProcessModule,
+        UserExercisesProcessModule,
+        LessonQuestionModule,
     ],
     controllers: [AppController],
     providers: [AppService],
