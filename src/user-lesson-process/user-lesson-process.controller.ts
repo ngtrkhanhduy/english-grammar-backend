@@ -1,34 +1,38 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Put, Delete, Param, Body } from '@nestjs/common';
 import { UserLessonProcessService } from './user-lesson-process.service';
-import { CreateUserLessonProcessDto } from './dto/create-user-lesson-process.dto';
-import { UpdateUserLessonProcessDto } from './dto/update-user-lesson-process.dto';
+import { UserLessonQuestion } from './schemas/user-lesson-process.schema';
 
 @Controller('user-lesson-process')
 export class UserLessonProcessController {
-  constructor(private readonly userLessonProcessService: UserLessonProcessService) {}
+    constructor(private readonly UserLessonQuestionService: UserLessonProcessService) {}
 
-  @Post()
-  create(@Body() createUserLessonProcessDto: CreateUserLessonProcessDto) {
-    return this.userLessonProcessService.create(createUserLessonProcessDto);
-  }
+    @Post()
+    async create(@Body() data: Partial<UserLessonQuestion>) {
+        return this.UserLessonQuestionService.create(data);
+    }
 
-  @Get()
-  findAll() {
-    return this.userLessonProcessService.findAll();
-  }
+    @Get()
+    async findAll() {
+        return this.UserLessonQuestionService.findAll();
+    }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.userLessonProcessService.findOne(+id);
-  }
+    @Get(':id')
+    async findById(@Param('id') id: string) {
+        return this.UserLessonQuestionService.findById(id);
+    }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateUserLessonProcessDto: UpdateUserLessonProcessDto) {
-    return this.userLessonProcessService.update(+id, updateUserLessonProcessDto);
-  }
+    @Get('name/:lesson_question_name')
+    async findByUserLessonQuestionName(@Param('lesson_question_name') lesson_question_name: string) {
+        return this.UserLessonQuestionService.findByUserLessonQuestionName(lesson_question_name);
+    }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.userLessonProcessService.remove(+id);
-  }
+    @Put(':id')
+    async update(@Param('id') id: string, @Body() data: Partial<UserLessonQuestion>) {
+        return this.UserLessonQuestionService.update(id, data);
+    }
+
+    @Delete(':id')
+    async delete(@Param('id') id: string) {
+        return this.UserLessonQuestionService.delete(id);
+    }
 }
