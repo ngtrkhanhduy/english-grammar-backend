@@ -10,24 +10,13 @@ class Question {
     @Prop({ required: true })
     question: string;
 
-    @Prop({
-        type: [
-            {
-                label: { type: String, required: true },
-                value: { type: String, required: true },
-            },
-        ],
-        required: true,
-    })
-    options: { label: string; value: string }[];
-
     @Prop({ required: true })
     correct_answer: string;
 }
 
 @Schema()
 export class ExercisesQuestion {
-    @Prop({ required: true })
+    @Prop({ required: true, unique: true })
     exercises_question_name: string;
 
     @Prop({
