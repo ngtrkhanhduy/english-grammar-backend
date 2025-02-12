@@ -15,13 +15,11 @@ export class UserExercisesProcessService {
         private readonly exercisesQuestionService: ExercisesQuestionService,
     ) {}
     async create(createUserExercisesProcessDto: CreateUserExercisesProcessDto): Promise<UserExercisesProcess> {
-        // Kiểm tra sự tồn tại của người dùng
         const user = await this.usersService.findByUsername(createUserExercisesProcessDto.username);
         if (!user) {
             throw new Error('User not found');
         }
 
-        // Kiểm tra sự tồn tại của bài kiểm tra
         const exercise = await this.exercisesQuestionService.findByName(
             createUserExercisesProcessDto.exercises_process_name,
         );
@@ -29,8 +27,24 @@ export class UserExercisesProcessService {
             throw new Error('Exercise not found');
         }
 
-        // Nếu cả hai giá trị trên đều hợp lệ, tiến hành tạo bài làm
-        const newExercise = new this.userExercisesProcessModel(createUserExercisesProcessDto);
+        let result = 0;
+        const questions = exercise[0].questions_api;
+
+        questions.forEach((question) => {
+            const userAnswer = createUserExercisesProcessDto.answer[question.questionNumber];
+
+            if (userAnswer === question.correct_answer) {
+                result += 1;
+            }
+        });
+
+        // Step 4: Create the new UserExercisesProcess with the result
+        const newExercise = new this.userExercisesProcessModel({
+            ...createUserExercisesProcessDto,
+            result,
+            count: questions.length, // Assuming the count is the number of questions in the exercise
+        });
+
         return newExercise.save();
     }
 
