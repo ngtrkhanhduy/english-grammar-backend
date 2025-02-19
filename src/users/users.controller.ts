@@ -40,7 +40,6 @@ export class UsersController {
     async findUserInfoByUsername(@Param('username') username: string) {
         const userInfo = await this.usersService.findByUsername(username);
         return {
-            name: userInfo.name,
             username: userInfo.username,
             role: userInfo.role,
             accountType: userInfo.accountType,

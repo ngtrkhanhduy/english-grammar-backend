@@ -36,7 +36,7 @@ export class AuthService {
 
         //send email
         this.mailerService.sendMail({
-            to: 'ngtrkhanhduy1308@gmail.com', // list of receivers
+            to: newUser.username, // list of receivers
             subject: 'Activate your account at English Grammar', // Subject line
             text: 'Welcome', // plaintext body
             template: 'register',
@@ -135,6 +135,7 @@ export class AuthService {
         user.isActive = true;
         await this.usersService.update(user.id, user);
 
+        // Return a success message instead of a string
         return `Successfully activated your account, ${username}!`;
     }
 }

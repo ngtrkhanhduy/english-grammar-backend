@@ -1,4 +1,4 @@
-import { Body, Controller, Get, HttpCode, HttpStatus, Post, Req, UseGuards } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Get, HttpCode, HttpStatus, Post, Req, UseGuards } from '@nestjs/common';
 import { Request } from 'express';
 import { CreateUserDto } from 'src/users/dto/create-user.dto';
 import { AuthService } from './auth.service';
@@ -39,9 +39,14 @@ export class AuthController {
     }
 
     @Post('active')
-    activeUserAccountByUsername(@Req() req: Request) {
+    async activeUserAccountByUsername(@Req() req: Request) {
         const username = req.body.username;
         const activeAccountKey = req.body.activeAccountKey;
-        return this.authService.activeUserAccountByUsername(username, activeAccountKey);
+        try {
+            const result = await this.authService.activeUserAccountByUsername(username, activeAccountKey);
+            return { success: true, message: result }; // Return success flag and message
+        } catch (error) {
+            throw new BadRequestException(error.message); // Throw error if any
+        }
     }
 }
