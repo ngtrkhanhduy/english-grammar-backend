@@ -1,27 +1,21 @@
-import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document } from 'mongoose';
+import { Schema, Document } from 'mongoose';
 
-export type UserLessonQuestionDocument = UserLessonQuestion & Document;
+export const UserLearningProcessSchema = new Schema({
+    username: { type: String, required: true },
+    learningProcess: [
+        {
+            title: { type: String, required: true },
+            to: { type: String, required: true },
+            completed: { type: Boolean, required: true },
+        },
+    ],
+});
 
-@Schema({ timestamps: true })
-export class UserLessonQuestion {
-    @Prop({ required: true })
-    lesson_question_name: string;
-
-    @Prop({ required: true })
+export interface UserLearningProcess extends Document {
     username: string;
-
-    @Prop({ type: Map, of: String, required: true })
-    answer: Map<string, string>;
-
-    @Prop({ required: true })
-    count: number;
-
-    @Prop({ required: true })
-    result: number;
-
-    @Prop({ default: Date.now })
-    createdAt: Date;
+    learningProcess: {
+        title: string;
+        to: string;
+        completed: boolean;
+    }[];
 }
-
-export const UserLessonQuestionSchema = SchemaFactory.createForClass(UserLessonQuestion);

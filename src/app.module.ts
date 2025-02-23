@@ -9,7 +9,7 @@ import { MailerModule } from '@nestjs-modules/mailer';
 import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter';
 import { ExercisesQuestionModule } from './exercises-question/exercises-question.module';
 import { UserInformationModule } from './user-information/user-information.module';
-import { UserLessonProcessModule } from './user-lesson-process/user-lesson-process.module';
+import { UserLearningProcessModule } from './user-lesson-process/user-lesson-process.module';
 import { UserExercisesProcessModule } from './user-exercises-process/user-exercises-process.module';
 import { LessonQuestionModule } from './lesson-question/lesson-question.module';
 
@@ -55,7 +55,7 @@ import { LessonQuestionModule } from './lesson-question/lesson-question.module';
         }),
         ExercisesQuestionModule,
         UserInformationModule,
-        UserLessonProcessModule,
+        UserLearningProcessModule,
         UserExercisesProcessModule,
         LessonQuestionModule,
     ],

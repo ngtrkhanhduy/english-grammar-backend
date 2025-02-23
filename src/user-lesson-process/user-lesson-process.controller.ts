@@ -1,38 +1,32 @@
-import { Controller, Get, Post, Put, Delete, Param, Body } from '@nestjs/common';
-import { UserLessonProcessService } from './user-lesson-process.service';
-import { UserLessonQuestion } from './schemas/user-lesson-process.schema';
+import { Controller, Get, Post, Body, Param, Put } from '@nestjs/common';
+import { UserLearningProcessService } from './user-lesson-process.service';
 
-@Controller('user-lesson-process')
-export class UserLessonProcessController {
-    constructor(private readonly UserLessonQuestionService: UserLessonProcessService) {}
+@Controller('user-learning-process')
+export class UserLearningProcessController {
+    constructor(private readonly userLearningProcessService: UserLearningProcessService) {}
 
     @Post()
-    async create(@Body() data: Partial<UserLessonQuestion>) {
-        return this.UserLessonQuestionService.create(data);
+    async create(@Body() body: { username: string; learningProcess: any[] }) {
+        const { username, learningProcess } = body;
+        return this.userLearningProcessService.create(username, learningProcess);
     }
 
-    @Get()
-    async findAll() {
-        return this.UserLessonQuestionService.findAll();
+    @Get(':username')
+    async getLearningProcess(@Param('username') username: string) {
+        return this.userLearningProcessService.findByUsername(username);
     }
 
-    @Get(':id')
-    async findById(@Param('id') id: string) {
-        return this.UserLessonQuestionService.findById(id);
+    @Put(':username')
+    async updateLearningProcess(@Param('username') username: string, @Body() body: { learningProcess: any[] }) {
+        return this.userLearningProcessService.updateLearningProcess(username, body.learningProcess);
     }
 
-    @Get('name/:lesson_question_name')
-    async findByUserLessonQuestionName(@Param('lesson_question_name') lesson_question_name: string) {
-        return this.UserLessonQuestionService.findByUserLessonQuestionName(lesson_question_name);
-    }
-
-    @Put(':id')
-    async update(@Param('id') id: string, @Body() data: Partial<UserLessonQuestion>) {
-        return this.UserLessonQuestionService.update(id, data);
-    }
-
-    @Delete(':id')
-    async delete(@Param('id') id: string) {
-        return this.UserLessonQuestionService.delete(id);
+    @Put(':username/:to')
+    async updateCompletedStatus(
+        @Param('username') username: string,
+        @Param('to') to: string,
+        @Body() body: { completed: boolean },
+    ) {
+        return this.userLearningProcessService.updateCompletedStatus(username, '/' + to, body.completed);
     }
 }

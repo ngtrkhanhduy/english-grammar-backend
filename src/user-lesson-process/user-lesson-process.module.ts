@@ -1,12 +1,12 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
-import { UserLessonProcessService } from './user-lesson-process.service';
-import { UserLessonProcessController } from './user-lesson-process.controller';
-import { UserLessonQuestion, UserLessonQuestionSchema } from './schemas/user-lesson-process.schema';
+import { UserLearningProcessController } from './user-lesson-process.controller';
+import { UserLearningProcessService } from './user-lesson-process.service';
+import { UserLearningProcessSchema } from './schemas/user-lesson-process.schema';
 
 @Module({
-    imports: [MongooseModule.forFeature([{ name: UserLessonQuestion.name, schema: UserLessonQuestionSchema }])],
-    controllers: [UserLessonProcessController],
-    providers: [UserLessonProcessService],
+    imports: [MongooseModule.forFeature([{ name: 'UserLearningProcess', schema: UserLearningProcessSchema }])],
+    controllers: [UserLearningProcessController],
+    providers: [UserLearningProcessService],
 })
-export class UserLessonProcessModule {}
+export class UserLearningProcessModule {}

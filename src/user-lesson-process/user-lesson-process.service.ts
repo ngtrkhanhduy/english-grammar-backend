@@ -1,48 +1,46 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { UserLessonQuestion, UserLessonQuestionDocument } from './schemas/user-lesson-process.schema';
+import { UserLearningProcess } from './schemas/user-lesson-process.schema';
 
 @Injectable()
-export class UserLessonProcessService {
+export class UserLearningProcessService {
     constructor(
-        @InjectModel(UserLessonQuestion.name) private UserLessonQuestionModel: Model<UserLessonQuestionDocument>,
+        @InjectModel('UserLearningProcess') private readonly userLearningProcessModel: Model<UserLearningProcess>,
     ) {}
 
-    async create(data: Partial<UserLessonQuestion>): Promise<UserLessonQuestion> {
-        const newQuestion = new this.UserLessonQuestionModel(data);
-        return newQuestion.save();
+    async create(username: string, learningProcess: any[]): Promise<UserLearningProcess> {
+        const newLearningProcess = new this.userLearningProcessModel({ username, learningProcess });
+        return newLearningProcess.save();
     }
 
-    async findAll(): Promise<UserLessonQuestion[]> {
-        return this.UserLessonQuestionModel.find().exec();
-    }
-
-    async findById(id: string): Promise<UserLessonQuestion> {
-        const question = await this.UserLessonQuestionModel.findById(id).exec();
-        if (!question) {
-            throw new NotFoundException(`Lesson Question with ID ${id} not found`);
+    async findByUsername(username: string): Promise<UserLearningProcess> {
+        const learningProcess = await this.userLearningProcessModel.findOne({ username }).exec();
+        if (!learningProcess) {
+            throw new NotFoundException(`User with username ${username} not found`);
         }
-        return question;
+        return learningProcess;
     }
 
-    async findByUserLessonQuestionName(name: string): Promise<UserLessonQuestion[]> {
-        return this.UserLessonQuestionModel.find({ lesson_question_name: name }).exec();
-    }
-
-    async update(id: string, data: Partial<UserLessonQuestion>): Promise<UserLessonQuestion> {
-        const updatedQuestion = await this.UserLessonQuestionModel.findByIdAndUpdate(id, data, { new: true }).exec();
-        if (!updatedQuestion) {
-            throw new NotFoundException(`Lesson Question with ID ${id} not found`);
+    async updateLearningProcess(username: string, learningProcess: any[]): Promise<UserLearningProcess> {
+        const updatedLearningProcess = await this.userLearningProcessModel
+            .findOneAndUpdate({ username }, { learningProcess }, { new: true })
+            .exec();
+        if (!updatedLearningProcess) {
+            throw new NotFoundException(`User with username ${username} not found`);
         }
-        return updatedQuestion;
+        return updatedLearningProcess;
     }
 
-    async delete(id: string): Promise<UserLessonQuestion> {
-        const deletedQuestion = await this.UserLessonQuestionModel.findByIdAndDelete(id).exec();
-        if (!deletedQuestion) {
-            throw new NotFoundException(`Lesson Question with ID ${id} not found`);
+    async updateCompletedStatus(username: string, to: string, completed: boolean): Promise<UserLearningProcess> {
+        const user = await this.userLearningProcessModel.findOne({ username }).exec();
+        if (!user) {
+            throw new NotFoundException(`User with username ${username} not found`);
         }
-        return deletedQuestion;
+
+        const learningProcess = user.learningProcess.map((item) => (item.to === to ? { ...item, completed } : item));
+
+        user.learningProcess = learningProcess;
+        return user.save();
     }
 }
