@@ -1,4 +1,16 @@
-import { BadRequestException, Body, Controller, Get, HttpCode, HttpStatus, Post, Req, UseGuards } from '@nestjs/common';
+import {
+    BadRequestException,
+    Body,
+    Controller,
+    Get,
+    HttpCode,
+    HttpStatus,
+    Param,
+    Patch,
+    Post,
+    Req,
+    UseGuards,
+} from '@nestjs/common';
 import { Request } from 'express';
 import { CreateUserDto } from 'src/users/dto/create-user.dto';
 import { AuthService } from './auth.service';
@@ -6,6 +18,7 @@ import { AuthDto } from './dto/auth.dto';
 import { AccessTokenGuard } from 'src/common/guards/accessToken.guard';
 import { RefreshTokenGuard } from 'src/common/guards/refreshToken.guard';
 import { MailerService } from '@nestjs-modules/mailer';
+import { ChangePasswordDto } from './dto/change-password.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -48,5 +61,11 @@ export class AuthController {
         } catch (error) {
             throw new BadRequestException(error.message); // Throw error if any
         }
+    }
+
+    @UseGuards(AccessTokenGuard)
+    @Post(':username/change-password')
+    async changePassword(@Param('username') username: string, @Body() changePasswordDto: ChangePasswordDto) {
+        return this.authService.changePasswordByUsername(username, changePasswordDto);
     }
 }

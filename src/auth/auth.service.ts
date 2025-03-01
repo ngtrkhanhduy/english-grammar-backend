@@ -7,6 +7,7 @@ import { ConfigService } from '@nestjs/config';
 import { AuthDto } from './dto/auth.dto';
 import { v4 as uuidv4 } from 'uuid';
 import { MailerService } from '@nestjs-modules/mailer';
+import { ChangePasswordDto } from './dto/change-password.dto';
 
 @Injectable()
 export class AuthService {
@@ -137,5 +138,24 @@ export class AuthService {
 
         // Return a success message instead of a string
         return `Successfully activated your account, ${username}!`;
+    }
+
+    async changePasswordByUsername(username: string, changePasswordDto: ChangePasswordDto) {
+        const user = await this.usersService.findByUsername(username);
+        if (!user) {
+            throw new BadRequestException('User does not exist');
+        }
+
+        // Kiểm tra mật khẩu cũ
+        const isMatch = await argon2.verify(user.password, changePasswordDto.oldPassword);
+        if (!isMatch) {
+            throw new BadRequestException('Old password is incorrect');
+        }
+
+        // Hash mật khẩu mới và cập nhật vào DB
+        const hashedPassword = await this.hashData(changePasswordDto.newPassword);
+        await this.usersService.update(user.id, { password: hashedPassword });
+
+        return { message: 'Password changed successfully' };
     }
 }
